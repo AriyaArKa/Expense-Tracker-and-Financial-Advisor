@@ -6,6 +6,7 @@ import { HTTPSTATUS } from "./config/http.config";
 import { error } from "console";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
 import { BadRequestException } from "./utils/app-error";
+import { asyncHandler } from "./middlewares/asyncHandler.middleware";
 
 const app = express();
 const BASE_PATH = Env.BASE_PATH;
@@ -20,12 +21,15 @@ app.use(
   })
 );
 
-app.get("/", (req: Request, res: Response, next: NextFunction) => {
+app.get(
+  "/",
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     throw new BadRequestException("TThis is a test error");
-  res.status(HTTPSTATUS.OK).json({
-    message: "Hello Subscribe to the channel",
-  });
-});
+    res.status(HTTPSTATUS.OK).json({
+      message: "Hello Subscribe to the channel",
+    });
+  })
+);
 
 app.use(errorHandler);
 

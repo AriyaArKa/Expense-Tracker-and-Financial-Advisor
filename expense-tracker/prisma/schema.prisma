@@ -14,3 +14,98 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
+model User {
+  id           String    @id @default(uuid())
+  clerkUserId  String    @unique // Clerk user ID
+  email        String    @unique
+  name         String?
+  imageUrl     String?
+  transactions Transaction[] //Reference to Transaction model
+  accounts     Account[]      //Reference to Account model
+  budgets      Budget[]       //Reference to Budget model
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("users")// In the database, the table will be named "users"
+}
+
+model Account {
+  id          String          @id @default(uuid())
+  name        String
+  type        AccountType
+  balance     Decimal         @default(0) // we will ask initial balance when creating account
+  isDefault   Boolean         @default(false)
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]  //Reference to Transaction model
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+enum AccountType {
+  CURRENT
+  SAVINGS
+}
+
+model Transaction {
+  id          String      @id @default(uuid())
+  type        TransactionType
+  amount      Decimal
+  description String?
+  date        DateTime
+  category    String
+  receiptUrl  String?
+  isRecurring Boolean     @default(false)
+  recurringInterval RecurringInterval? // only used if isRecurring is true
+  nextRecurrenceDate DateTime? // next date for recurring transaction
+  lastProcessed DateTime? // last date when the recurring transaction was processed
+  status      TransactionStatus @default(COMPLETED) // PENDING, COMPLETED, FAILED
+  userId     String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId   String
+  account     Account     @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  budget      Budget?     @relation(fields: [budgetId], references: [id])
+  budgetId    String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([accountId])
+  @@map("transactions")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum RecurringInterval {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model Budget {
+  id          String        @id @default(uuid())
+  amount      Decimal
+  lastAlertSent DateTime? // to track when the last alert was sent
+  userId      String        @unique
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([userId])
+  @@map("budgets")
+}

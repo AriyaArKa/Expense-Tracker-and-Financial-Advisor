@@ -6,19 +6,42 @@ import { LayoutDashboard, PenBox } from "lucide-react";
 
 const Header = () => {
   return (
-    <div className="fixed top-0  w-full bg-white/80 backdrop-blur-md z-50 border-b">
-      <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href="/" aria-label="Home" className="inline-block">
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      width: '100%',
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      backdropFilter: 'blur(10px)',
+      zIndex: 50,
+      borderBottom: '1px solid #e5e7eb'
+    }}>
+      <nav style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}>
+        <Link href="/" aria-label="Home" style={{ display: 'inline-block' }}>
           <Image
             src="/logo.png"
             alt="Logo"
             height={60}
             width={200}
-            className="h-12 w-auto object-contain"
+            style={{
+              height: '3rem',
+              width: 'auto',
+              objectFit: 'contain'
+            }}
             priority
           />
         </Link>
-        <div className="flex items-center gap-4">
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem'
+        }}>
 <SignedIn>
     <Link href={"/dashboard"} className="text-grey-600 hover:text-blue-600 flex items-center gap-2">
       <Button variant="outline">

@@ -32,8 +32,8 @@ model User {
 
 model Account {
   id          String          @id @default(uuid())
-  name        String
-  type        AccountType
+  name        String          // e.g., "Checking", "Savings"
+  type        AccountType     // e.g., CURRENT, SAVINGS etc.
   balance     Decimal         @default(0) // we will ask initial balance when creating account
   isDefault   Boolean         @default(false)
   userId      String
@@ -68,8 +68,6 @@ model Transaction {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accountId   String
   account     Account     @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  budget      Budget?     @relation(fields: [budgetId], references: [id])
-  budgetId    String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
@@ -102,7 +100,6 @@ model Budget {
   lastAlertSent DateTime? // to track when the last alert was sent
   userId      String        @unique
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 

@@ -2,46 +2,56 @@
 
 import React, { useState } from 'react';
 import {
-    Drawer,
-    DrawerContent,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-    DrawerFooter,
-    DrawerClose,
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  DrawerFooter,
+  DrawerClose,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { accountSchema } from "@/app/lib/schema";
+import { Loader2 } from "lucide-react";
 
 const CreateAccountDrawer = ({ children }) => {
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [createAccountLoadingState, setCreateAccountLoadingState] = useState(false);
 
-    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm({
-        resolver: zodResolver(accountSchema),
-        defaultValues: {
-            name: "",
-            type: "CURRENT",
-            balance: "",
-            isDefault: false
-        },
-    });
+  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm({
+    resolver: zodResolver(accountSchema),
+    defaultValues: {
+      name: "",
+      type: "CURRENT",
+      balance: "",
+      isDefault: false
+    },
+  });
 
-    const onSubmit = async (data) => {
+  const {
+    loading: createAccountLoading,
+    fn: createAccountFn,
+    error,
+    data: newAccount,
+  } = useFetch(createAccount);
+
+  const onSubmit = async (data) => {
     await createAccountFn(data);
   };
 
-    return (
+
+  return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
@@ -156,3 +166,5 @@ const CreateAccountDrawer = ({ children }) => {
     </Drawer>
   );
 }
+
+export default CreateAccountDrawer;

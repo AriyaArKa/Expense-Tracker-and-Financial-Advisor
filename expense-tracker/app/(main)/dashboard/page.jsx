@@ -12,7 +12,7 @@ function DashboardPage(){
             {/* accounts grid */}
             <div>
                 <CreateAccountDrawer>
-                    
+                    open
                 </CreateAccountDrawer>
             </div>
         </div>

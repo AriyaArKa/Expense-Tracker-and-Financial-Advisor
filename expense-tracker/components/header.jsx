@@ -1,76 +1,61 @@
-import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
-import Link from "next/link";
-import Image from "next/image";
+import React from "react";
 import { Button } from "./ui/button";
-import { LayoutDashboard, PenBox } from "lucide-react";
+import { PenBox, LayoutDashboard } from "lucide-react";
+import Link from "next/link";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { checkUser } from "@/lib/checkUser";
+import Image from "next/image";
 
 const Header = async () => {
   await checkUser();
+
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        width: "100%",
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        backdropFilter: "blur(10px)",
-        zIndex: 50,
-        borderBottom: "1px solid #e5e7eb",
-      }}
-    >
-      <nav
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          padding: "1rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Link href="/" aria-label="Home" style={{ display: "inline-block" }}>
+    <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b">
+      <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <Link href="/">
           <Image
-            src="/logo.png"
-            alt="Logo"
-            height={60}
+            src={"/logo.png"}
+            alt="Welth Logo"
             width={200}
-            style={{
-              height: "3rem",
-              width: "auto",
-              objectFit: "contain",
-            }}
-            priority
+            height={60}
+            className="h-12 w-auto object-contain"
           />
         </Link>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "1rem",
-          }}
-        >
+
+        {/* Navigation Links - Different for signed in/out users */}
+        <div className="hidden md:flex items-center space-x-8">
+          <SignedOut>
+            <a href="#features" className="text-gray-600 hover:text-blue-600">
+              Features
+            </a>
+            <a
+              href="#testimonials"
+              className="text-gray-600 hover:text-blue-600"
+            >
+              Testimonials
+            </a>
+          </SignedOut>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center space-x-4">
           <SignedIn>
             <Link
-              href={"/dashboard"}
-              className="text-grey-600 hover:text-blue-600 flex items-center gap-2"
+              href="/dashboard"
+              className="text-gray-600 hover:text-blue-600 flex items-center gap-2"
             >
               <Button variant="outline">
                 <LayoutDashboard size={18} />
                 <span className="hidden md:inline">Dashboard</span>
               </Button>
             </Link>
-            <Link
-              href={"/transaction/create"}
-              className="flex items-center gap-2"
-            >
-              <Button>
+            <a href="/transaction/create">
+              <Button className="flex items-center gap-2">
                 <PenBox size={18} />
-                <span className="hidden md:inline">Create Transaction</span>
+                <span className="hidden md:inline">Add Transaction</span>
               </Button>
-            </Link>
+            </a>
           </SignedIn>
-
           <SignedOut>
             <SignInButton forceRedirectUrl="/dashboard">
               <Button variant="outline">Login</Button>
@@ -87,7 +72,7 @@ const Header = async () => {
           </SignedIn>
         </div>
       </nav>
-    </div>
+    </header>
   );
 };
 

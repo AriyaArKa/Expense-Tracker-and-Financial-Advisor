@@ -191,3 +191,35 @@ export async function updateTransaction(id, data) {
     throw new Error(error.message);
   }
 }
+// Get User Transactions
+export async function getUserTransactions(query = {}) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const transactions = await db.transaction.findMany({
+      where: {
+        userId: user.id,
+        ...query,
+      },
+      include: {
+        account: true,
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
+
+    return { success: true, data: transactions };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}

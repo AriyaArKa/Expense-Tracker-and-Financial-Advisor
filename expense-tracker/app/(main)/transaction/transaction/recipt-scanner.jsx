@@ -25,6 +25,7 @@ export function ReceiptScanner({ onScanComplete }) {
     await scanReceiptFn(file);
   };
 
+  
   useEffect(() => {
     if (scannedData && !scanReceiptLoading) {
       onScanComplete(scannedData);

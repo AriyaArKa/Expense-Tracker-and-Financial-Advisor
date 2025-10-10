@@ -4,3 +4,4 @@ const page = () => {
   return <SignIn />;
 };
 
+export default page;

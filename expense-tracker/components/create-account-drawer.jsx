@@ -1,16 +1,21 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import useFetch from "@/hooks/use-fetch";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-  DrawerFooter,
   DrawerClose,
 } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -20,22 +25,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { createAccount } from "@/actions/dashboard";
 import { accountSchema } from "@/app/lib/schema";
-import { Loader2 } from "lucide-react";
 
-const CreateAccountDrawer = ({ children }) => {
+export function CreateAccountDrawer({ children }) {
   const [open, setOpen] = useState(false);
-  const [createAccountLoadingState, setCreateAccountLoadingState] = useState(false);
-
-  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+    reset,
+  } = useForm({
     resolver: zodResolver(accountSchema),
     defaultValues: {
       name: "",
       type: "CURRENT",
       balance: "",
-      isDefault: false
+      isDefault: false,
     },
   });
 
@@ -50,6 +58,19 @@ const CreateAccountDrawer = ({ children }) => {
     await createAccountFn(data);
   };
 
+  useEffect(() => {
+    if (newAccount) {
+      toast.success("Account created successfully");
+      reset();
+      setOpen(false);
+    }
+  }, [newAccount, reset]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message || "Failed to create account");
+    }
+  }, [error]);
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
@@ -166,5 +187,3 @@ const CreateAccountDrawer = ({ children }) => {
     </Drawer>
   );
 }
-
-export default CreateAccountDrawer;

@@ -18,12 +18,6 @@ cd Expense-Tracker-and-Financial-Advisor
 npm install
 ```
 
-## Usage
-
-```bash
-npm start
-```
-
 ## Technologies Used
 
 - JavaScript
